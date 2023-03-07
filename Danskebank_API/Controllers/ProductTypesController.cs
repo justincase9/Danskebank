@@ -37,9 +37,7 @@ namespace Danskebank_API.Controllers
             var productType = await _context.ProductTypes.FindAsync(id);
 
             if (productType == null)
-            {
                 return NotFound();
-            }
 
             return productType;
         }
@@ -49,9 +47,7 @@ namespace Danskebank_API.Controllers
         public async Task<IActionResult> PutProductType(int id, ProductType productType)
         {
             if (id != productType.ProductTypeID)
-            {
                 return BadRequest();
-            }
 
             _context.Entry(productType).State = EntityState.Modified;
 
@@ -61,14 +57,10 @@ namespace Danskebank_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductTypeExists(id))
-                {
+                if (!ProductTypeExists(id))               
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -94,9 +86,7 @@ namespace Danskebank_API.Controllers
         {
             var productType = await _context.ProductTypes.FindAsync(id);
             if (productType == null)
-            {
                 return NotFound();
-            }
 
             _context.ProductTypes.Remove(productType);
             await _context.SaveChangesAsync();
