@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Danskebank_API.Identity;
 using Danskebank_API.Entities.Dto;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.CodeAnalysis;
 
 namespace Danskebank_API.Controllers
 {
@@ -41,9 +43,7 @@ namespace Danskebank_API.Controllers
             var product = await _context.Products.FindAsync(id);
 
             if (product == null)
-            {
                 return NotFound();
-            }
 
             return product;
         }
@@ -52,13 +52,13 @@ namespace Danskebank_API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = Role.Admin)]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductDto productinfo)
         {
-            if (id != product.ProductID)
-            {
-                return BadRequest();
-            }
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound();
 
+            FillInProductData(ref product, productinfo);
 
             _context.Entry(product).State = EntityState.Modified;
 
@@ -69,13 +69,9 @@ namespace Danskebank_API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ProductExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -88,15 +84,7 @@ namespace Danskebank_API.Controllers
         public async Task<ActionResult<Product>> PostProduct(ProductDto productInfo)
         {
             Product product = new Product();
-            product.Name = productInfo.Name;
-            product.Description = productInfo.Description;
-            product.Price = productInfo.Price;
-            var type = _context.ProductTypes.Where(x => x.Name == productInfo.Type).FirstOrDefault();
-            if (type == null)
-                product.TypeID = AddProductType(productInfo.Type);  
-            var subtype = _context.ProductSubtypes.Where(x => x.Name == productInfo.Subtype).FirstOrDefault();
-            if (type == null)
-                product.SubtypeID = AddProductSubtype(productInfo.Subtype, product.TypeID);  
+            FillInProductData(ref product, productInfo);
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -111,9 +99,7 @@ namespace Danskebank_API.Controllers
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
-            {
                 return NotFound();
-            }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
@@ -142,6 +128,25 @@ namespace Danskebank_API.Controllers
             _context.ProductSubtypes.Add(productSubtype);
             _context.SaveChanges();
             return productSubtype.SubtypeID;
+        }
+
+        private void FillInProductData(ref Product product, ProductDto productInfo)
+        {
+            product.Name = productInfo.Name;
+            product.Description = productInfo.Description;
+            product.Price = productInfo.Price;
+
+            var type = _context.ProductTypes.Where(x => x.Name == productInfo.Type).FirstOrDefault();
+            if (type == null)
+                product.TypeID = AddProductType(productInfo.Type);
+            else
+                product.TypeID = type.ProductTypeID;
+
+            var subtype = _context.ProductSubtypes.Where(x => x.Name == productInfo.Subtype).FirstOrDefault();
+            if (subtype == null)
+                product.SubtypeID = AddProductSubtype(productInfo.Subtype, product.TypeID);
+            else
+                product.SubtypeID = subtype.SubtypeID;
         }
     }
 }

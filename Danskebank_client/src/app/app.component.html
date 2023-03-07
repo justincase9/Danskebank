@@ -1,0 +1,13 @@
+<nav >
+  <div *ngIf="authService.isLoggedIn()">
+    <a routerLink="/products">Products Page</a>
+    <button (click)="logout()">Logout</button>
+  </div>
+  <div *ngIf="!authService.isLoggedIn()">
+    <a routerLink="/login">Login</a>
+    <a routerLink="/register">Register</a>
+  </div>
+</nav>
+<router-outlet>
+
+</router-outlet>

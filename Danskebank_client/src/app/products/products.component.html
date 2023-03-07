@@ -1,0 +1,53 @@
+<h2>Product List</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products">
+      <td>{{ product.productID }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.description }}</td>
+      <td>{{ product.price | currency }}</td>
+      <td *ngIf="isManager()"><button (click)="deleteProduct(product.productID)">Delete</button></td>
+      <td *ngIf="isManager()"><button (click)="editClicked(product.productID)">Edit</button></td>
+      
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="createNewProduct=true" *ngIf="isManager()">New Product</button>
+
+<div *ngIf="createNewProduct" #newProductForm>
+  <h2>New Product</h2>
+  <form (submit)="addProduct()">
+    <div>
+      <label>Name:</label>
+      <input type="text" name="name" [(ngModel)]="newProduct.name" required>
+    </div>
+    <div>
+      <label>Description:</label>
+      <textarea name="description" [(ngModel)]="newProduct.description"></textarea>
+    </div>
+    <div>
+      <label>Price:</label>
+      <input type="number" name="price" [(ngModel)]="newProduct.price" required>
+    </div>
+    <div>
+      <label>Type:</label>
+        <input type="string" name="type" [(ngModel)]="newProduct.type" required>
+    </div>
+    <div>
+      <label>Subtype:</label>
+        <input type="string" name="subtype" [(ngModel)]="newProduct.subtype" required>
+    </div>
+    <button type="submit">Create</button>
+    <button type="button" (click)="createNewProduct=false">Cancel</button>
+  </form>
+</div>

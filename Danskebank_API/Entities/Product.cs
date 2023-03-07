@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Danskebank_API.Entities
 {
@@ -16,7 +17,9 @@ namespace Danskebank_API.Entities
         public int SubtypeID { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual ProductType Type { get; set; }
+        [JsonIgnore]
         public virtual ProductSubtype Subtype { get; set; }
     }
 }

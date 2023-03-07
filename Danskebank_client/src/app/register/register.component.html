@@ -1,0 +1,19 @@
+<div class="alert alert-danger" *ngIf="ifRegisterFailed" style="color:red">Registration failed, check username, password and email and try again</div>
+<form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input class="form-control" name="username" id="username" type="text" [(ngModel)]="username" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input class="form-control" name="email" id="email" type="email" [(ngModel)]="email" required>
+    </div>
+  
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input class="form-control" name="password" id="password" type="password" [(ngModel)]="password" required>
+    </div>
+  
+    <button class="btn btn-primary">Register</button>
+  </form>

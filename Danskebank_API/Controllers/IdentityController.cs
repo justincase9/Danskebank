@@ -37,7 +37,10 @@ namespace Danskebank_API.Controllers
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.Username);
                 var token = await GenerateJwtToken(appUser);
-                return token.ToString();
+                return new OkObjectResult(new {
+                    JwtToken = token.ToString(),
+                    role =  _userManager.GetRolesAsync(appUser).Result.First()
+                });
             }
             throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
         }
