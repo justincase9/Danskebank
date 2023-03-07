@@ -85,7 +85,7 @@ namespace Danskebank_API.Controllers
         {
             Product product = new Product();
             FillInProductData(ref product, productInfo);
-
+            
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
